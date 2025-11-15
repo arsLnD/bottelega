@@ -115,7 +115,7 @@ if bot:
 
     if __name__ == "__main__":
         try:
-            main()
+            asyncio.run(main())
         except KeyboardInterrupt:
             logger.info("Bot stopped by user")
         except Exception as e:
@@ -123,3 +123,4 @@ if bot:
 else:
     logger.error("Dispatcher not created due to bot initialization failure")
     sys.exit(1)
+
