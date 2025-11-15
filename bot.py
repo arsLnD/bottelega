@@ -58,7 +58,7 @@ if bot:
                 sys.modules["handlers"] = handlers
                 spec.loader.exec_module(handlers)
             except Exception as e:
-                logger.error(f"Failed to load handlers package: {e}")
+                logger.warning(f"Failed to load handlers package: {e}")
             for name, rel in [
                 ("handlers.start", os.path.join(pkg_dir, "start.py")),
                 ("handlers.admin", os.path.join(pkg_dir, "admin", "__init__.py")),
@@ -70,9 +70,9 @@ if bot:
                     sys.modules[name] = m
                     s.loader.exec_module(m)
                 except Exception as e:
-                    logger.error(f"Failed to import {name}: {e}")
+                    logger.warning(f"Failed to import {name}: {e}")
         else:
-            logger.error("Handlers directory not found")
+            logger.warning("Handlers directory not found")
 
     async def on_startup(dp):
         """Actions on bot startup"""
@@ -95,7 +95,7 @@ if bot:
 
         logger.info("Bot shutdown complete")
 
-    async def main():
+    def main():
         """Main function to start the bot"""
         if not bot:
             logger.error("Bot not initialized. Exiting.")
@@ -115,7 +115,7 @@ if bot:
 
     if __name__ == "__main__":
         try:
-            asyncio.run(main())
+            main()
         except KeyboardInterrupt:
             logger.info("Bot stopped by user")
         except Exception as e:
