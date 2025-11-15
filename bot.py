@@ -3,10 +3,11 @@ import logging
 import os
 import sys
 
-from aiogram import Bot, Dispatcher
+from aiogram import Bot, Dispatcher, types
+from aiogram.dispatcher import FSMContext
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.utils.exceptions import ValidationError
-from config import bot_token
+from config import bot_token, start_text
 from web_server import HealthCheckServer
 
 # Configure logging
@@ -41,6 +42,7 @@ if bot:
     web_server = HealthCheckServer(bot, port=int(os.environ.get("PORT", 8080)))
 
     # Import handlers after dp initialization
+    handlers_loaded = True
     try:
         import handlers
     except ModuleNotFoundError:
@@ -73,6 +75,13 @@ if bot:
                     logger.warning(f"Failed to import {name}: {e}")
         else:
             logger.warning("Handlers directory not found")
+            handlers_loaded = False
+
+    if not handlers_loaded:
+        @dp.message_handler(commands=["start"], state="*")
+        async def _fallback_start(jam: types.Message, state: FSMContext):
+            await state.finish()
+            await jam.answer(start_text)
 
     async def on_startup(dp):
         """Actions on bot startup"""
