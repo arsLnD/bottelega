@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  telegram-bot:
+    build: .
+    container_name: telegram-giveaway-bot
+    restart: unless-stopped
+    volumes:
+      - ./db.sqlite3:/app/db.sqlite3
+      - ./config:/app/config
+    environment:
+      - PYTHONUNBUFFERED=1
+    networks:
+      - bot-network
+    # Если нужен доступ к веб-интерфейсу или API
+    # ports:
+    #   - "8000:8000"
+
+networks:
+  bot-network:
+    driver: bridge
+
+# Опционально: добавить базу данных PostgreSQL
+# Раскомментируйте секции ниже, если хотите использовать PostgreSQL вместо SQLite
+
+# services:
+#   telegram-bot:
+#     build: .
+#     container_name: telegram-giveaway-bot
+#     restart: unless-stopped
+#     depends_on:
+#       - postgres
+#     environment:
+#       - PYTHONUNBUFFERED=1
+#       - DATABASE_URL=postgresql://botuser:botpassword@postgres:5432/telegram_bot
+#     networks:
+#       - bot-network
+#
+#   postgres:
+#     image: postgres:13
+#     container_name: telegram-bot-db
+#     restart: unless-stopped
+#     environment:
+#       POSTGRES_DB: telegram_bot
+#       POSTGRES_USER: botuser
+#       POSTGRES_PASSWORD: botpassword
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+#     networks:
+#       - bot-network
+
+# volumes:
+#   postgres_data:

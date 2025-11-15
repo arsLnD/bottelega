@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: telegram-giveaway-bot
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python bot.py
+    plan: free
+    region: oregon
+    branch: main
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.18
+      - key: PYTHONUNBUFFERED
+        value: 1
+    autoDeploy: true
+    disk:
+      name: bot-data
+      mountPath: /opt/render/project/src
+      sizeGB: 1
