@@ -41,7 +41,11 @@ if bot:
     web_server = HealthCheckServer(bot, port=int(os.environ.get("PORT", 8080)))
 
     # Import handlers after dp initialization
-    from handlers import dp as handlers_dp
+    try:
+        import handlers
+    except ModuleNotFoundError:
+        sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+        import handlers
 
     async def on_startup(dp):
         """Actions on bot startup"""
@@ -92,3 +96,4 @@ if bot:
 else:
     logger.error("Dispatcher not created due to bot initialization failure")
     sys.exit(1)
+
